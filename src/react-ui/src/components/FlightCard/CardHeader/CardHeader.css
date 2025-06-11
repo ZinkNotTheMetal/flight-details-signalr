@@ -1,0 +1,81 @@
+.flightHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.airline {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.flightNumber {
+  background: rgba(102, 126, 234, 0.2);
+  color: #667eea;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  display: inline-block;
+  width: fit-content;
+}
+
+.aircraftInfo {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 0.25rem;
+}
+
+.statusContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.statusBadge {
+  padding: 0.75rem 1.5rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.onTime {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+}
+
+.delayed {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.boarding {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+}
+
+.enRoute {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+}
+
+.lastUpdate {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+}

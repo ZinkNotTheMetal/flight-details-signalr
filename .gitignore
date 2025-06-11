@@ -3,6 +3,7 @@ syntax: glob
 # Custom
 # Ignore to not leak secrets
 dev.tfvars
+appsettings.development.json
 
 ### VisualStudio ###
 

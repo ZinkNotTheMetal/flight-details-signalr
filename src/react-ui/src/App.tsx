@@ -1,35 +1,72 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from "react"
+import { FlightHeader } from "./components/FlightHeader/FlightHeader"
+import * as signalR from '@microsoft/signalr'
 import './App.css'
+import { FlightCard } from "./components/FlightCard/FlightCard"
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [trackedFlight, setTrackedFlight] = useState<string | null>(null)
+  const [signalRConnection, setSignalRConnection] = useState<signalR.HubConnection | null>(null)
+  const [isConnected, setIsConnected] = useState<boolean>(false)
+
+  useEffect(() => {
+    const signalRConnection = new signalR.HubConnectionBuilder()
+      .withUrl("https://localhost:7272/flight-hub")
+      .withAutomaticReconnect()
+      .configureLogging(signalR.LogLevel.Information)
+      .build()
+
+    signalRConnection.onreconnecting(() => {
+      console.log("SignalR reconnecting...")
+      setIsConnected(false)
+    })
+
+    signalRConnection.onclose(() => {
+      console.log("SignalR connection closed")
+      setIsConnected(false)
+    })
+
+    const startConnection = async () => {
+      try {
+        await signalRConnection.start()
+        console.log("SignalR Connected")
+        setSignalRConnection(signalRConnection)
+        setIsConnected(true)
+      } catch (err) {
+        console.error("SignalR Connection Error: ", err)
+        setTimeout(startConnection, 5000)
+      }
+    }
+
+    startConnection()
+
+    return () => {
+      if (signalRConnection) {
+        if (trackedFlight) {
+          signalRConnection.invoke("UnwatchFlight", trackedFlight)
+            .catch(err => console.error("Error un-watching flight on cleanup:", err))
+        }
+        signalRConnection.stop()
+          .then(() => console.log("SignalR connection stopped"))
+          .catch(err => console.error("Error stopping SignalR connection:", err))
+      }
+    }
+  }, [])
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="container background">
+      <FlightHeader setTrackedFlight={(flight) => setTrackedFlight(flight)} />
+
+      {trackedFlight && (
+        <FlightCard signalRConnection={signalRConnection} flightNumber={trackedFlight} />
+      )}
+
+      <span>{trackedFlight}</span>
+
+      <span>SignalR Connection: {isConnected.toString()}</span>
+      
+    </div>
+  );
 }
 
-export default App
+export default App;
